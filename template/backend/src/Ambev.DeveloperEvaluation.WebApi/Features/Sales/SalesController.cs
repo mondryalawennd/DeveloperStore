@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Ambev.DeveloperEvaluation.Application.Sales.CreateSale;
 using Ambev.DeveloperEvaluation.Application.Sales.DeleteSale;
 using Ambev.DeveloperEvaluation.Application.Sales.GetSaleProfile;
+using Ambev.DeveloperEvaluation.Application.Sales.UpdateSale;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Controllers;
 
@@ -24,6 +25,23 @@ public class SalesController : ControllerBase
     public async Task<IActionResult> Create([FromBody] CreateSaleCommand command)
     {
         var result = await _mediator.Send(command);
+        return Ok(result);
+    }
+
+    /// <summary>
+    /// Update a sale
+    /// </summary>
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Update(Guid id, [FromBody] UpdateSaleCommand command)
+    {
+        if (id != command.Id)
+            return BadRequest("Id obrigatório!");
+
+        var result = await _mediator.Send(command);
+
+        if (result == null)
+            return NotFound();
+
         return Ok(result);
     }
 
@@ -54,4 +72,6 @@ public class SalesController : ControllerBase
 
         return Ok();
     }
+
+
 }
