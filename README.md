@@ -1,77 +1,101 @@
-# Developer Evaluation Project
+# DeveloperStore API
 
-`READ CAREFULLY`
+API desenvolvida em .NET 8 com arquitetura DDD para gerenciamento de vendas, seguindo boas práticas de separação de responsabilidades, CQRS e Entity Framework Core.
 
-## Use Case
-**You are a developer on the DeveloperStore team. Now we need to implement the API prototypes.**
+---
 
-As we work with `DDD`, to reference entities from other domains, we use the `External Identities` pattern with denormalization of entity descriptions.
+## 🚀 Tecnologias utilizadas
 
-Therefore, you will write an API (complete CRUD) that handles sales records. The API needs to be able to inform:
+- .NET 8
+- ASP.NET Core Web API
+- Entity Framework Core
+- PostgreSQL
+- MediatR (CQRS)
+- Docker
+- Swagger
 
-* Sale number
-* Date when the sale was made
-* Customer
-* Total sale amount
-* Branch where the sale was made
-* Products
-* Quantities
-* Unit prices
-* Discounts
-* Total amount for each item
-* Cancelled/Not Cancelled
+---
 
-It's not mandatory, but it would be a differential to build code for publishing events of:
-* SaleCreated
-* SaleModified
-* SaleCancelled
-* ItemCancelled
+## 📦 Funcionalidades
 
-If you write the code, **it's not required** to actually publish to any Message Broker. You can log a message in the application log or however you find most convenient.
+A API permite o gerenciamento completo de vendas:
 
-### Business Rules
+- Criar venda
+- Listar vendas
+- Buscar venda por ID
+- Atualizar venda
+- Cancelar/deletar venda
+- Aplicação de regras de desconto por quantidade de itens
 
-* Purchases above 4 identical items have a 10% discount
-* Purchases between 10 and 20 identical items have a 20% discount
-* It's not possible to sell above 20 identical items
-* Purchases below 4 items cannot have a discount
+---
 
-These business rules define quantity-based discounting tiers and limitations:
+## 📊 Regras de negócio
 
-1. Discount Tiers:
-   - 4+ items: 10% discount
-   - 10-20 items: 20% discount
+- Compras com **4 ou mais itens iguais** → 10% de desconto  
+- Compras entre **10 e 20 itens iguais** → 20% de desconto  
+- **Mais de 20 itens iguais não são permitidos**  
+- Compras com menos de 4 itens não recebem desconto  
 
-2. Restrictions:
-   - Maximum limit: 20 items per product
-   - No discounts allowed for quantities below 4 items
+---
 
-## Overview
-This section provides a high-level overview of the project and the various skills and competencies it aims to assess for developer candidates. 
+## 🧱 Estrutura do projeto
 
-See [Overview](/.doc/overview.md)
+- Domain → Entidades e regras de negócio
+- Application → Casos de uso (CQRS)
+- ORM → Entity Framework Core / Repositórios
+- WebApi → Controllers e configuração da API
 
-## Tech Stack
-This section lists the key technologies used in the project, including the backend, testing, frontend, and database components. 
+---
 
-See [Tech Stack](/.doc/tech-stack.md)
+## 🐳 Como executar com Docker (PostgreSQL)
 
-## Frameworks
-This section outlines the frameworks and libraries that are leveraged in the project to enhance development productivity and maintainability. 
+### Subir banco de dados:
 
-See [Frameworks](/.doc/frameworks.md)
+```bash
+docker run --name devstore-postgres \
+-e POSTGRES_USER=postgres \
+-e POSTGRES_PASSWORD=postgres \
+-e POSTGRES_DB=DeveloperEvaluation \
+-p 5432:5432 \
+-d postgres
 
-<!-- 
-## API Structure
-This section includes links to the detailed documentation for the different API resources:
-- [API General](./docs/general-api.md)
-- [Products API](/.doc/products-api.md)
-- [Carts API](/.doc/carts-api.md)
-- [Users API](/.doc/users-api.md)
-- [Auth API](/.doc/auth-api.md)
--->
+## ⚙️ Configuração do projeto
 
-## Project Structure
-This section describes the overall structure and organization of the project files and directories. 
+### No arquivo appsettings.json:
 
-See [Project Structure](/.doc/project-structure.md)
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Host=localhost;Port=5432;Database=DeveloperEvaluation;Username=postgres;Password=postgres"
+  }
+}
+
+## 🗄️ Executar migrations
+
+### dotnet ef database update --project src/Ambev.DeveloperEvaluation.ORM --startup-project src/Ambev.DeveloperEvaluation.WebApi
+
+## ▶️ Executar a aplicação
+
+### dotnet run --project src/Ambev.DeveloperEvaluation.WebApi
+
+## 📍 Endpoints principais
+
+📍 Endpoints principais
+Sales
+POST /api/sales → Criar venda
+GET /api/sales/{id} → Buscar venda
+GET /api/sales → Listar vendas
+PUT /api/sales/{id} → Atualizar venda
+DELETE /api/sales/{id} → Cancelar venda
+
+## 📄 Observações
+- A aplicação segue princípios de DDD
+- Utiliza padrão CQRS com MediatR
+- Regras de desconto aplicadas no domínio
+- Eventos de domínio podem ser logados:
+- SaleCreated
+- SaleUpdated
+- SaleCancelled
+
+## ▶️ Executar a aplicação
+
+### dotnet run --project src/Ambev.DeveloperEvaluation.WebApi
